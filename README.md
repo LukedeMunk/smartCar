@@ -1,4 +1,4 @@
-# smartCar\
+# smartCar
 This project is in development.
 
 ESP32-Cam smart car project.

@@ -5,9 +5,25 @@
  * 
  * Main program for ESP32-Cam
  */
-#include "MPU9250.h"
+
+#include "L298NMotors.h"
+#include <WiFi.h>
+#include <MPU9250.h>
+
+#define MOTOR_IN1   2
+#define MOTOR_IN2   14
+#define MOTOR_IN3   4
+#define MOTOR_IN4   15
+#define TACHO_L     12
+#define TACHO_R     13
+
+//Network credentials
+const char* ssid = "Wifi Boven";
+const char* password = "abCDef1245";
 
 MPU9250 mpu;
+L298NMotors motors(MOTOR_IN1, MOTOR_IN2, MOTOR_IN3, MOTOR_IN4, TACHO_L, TACHO_R);
+
  /**************************************************************************/
 /*!
   @brief    Setup microchip.
@@ -17,6 +33,18 @@ void setup() {
   Serial.begin(115200);
   Wire.begin();
   delay(1000);
+
+
+  // Connect to Wi-Fi
+  WiFi.begin(ssid, password);
+  Serial.print("Connecting to WiFi.");
+  while (WiFi.status() != WL_CONNECTED) {
+    Serial.print(".");
+    delay(200);
+  }
+  Serial.println(".");
+  Serial.println(WiFi.localIP());                                           //Print ESP32 Local IP Address
+  
 
   while (!mpu.setup(0x68)) {  // change to your own address
     Serial.println("MPU connection failed. Please check your connection with `connection_check` example.");
@@ -52,6 +80,7 @@ void loop() {
       prev_ms = millis();
     }
   }
+
 }
 
 void print_roll_pitch_yaw() {
